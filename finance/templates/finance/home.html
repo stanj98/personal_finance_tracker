@@ -1,0 +1,33 @@
+
+{% extends "finance/base.html" %}
+
+{% block content %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Accounts</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transacation in transactions %}
+                <tr>
+                    <th scope="row">{{ transacation.id }}</th>
+                    <td>{{ transacation.desc }}</td>
+                    <td>{{ transacation.category }}</td>
+                    <td>{{ transacation.account }}</td>
+                    <td>{{ transacation.amount }}</td>
+                    <td>{{ transacation.date }}</td>
+                    <td><button type="button" class="btn btn-info">Edit</button></td>
+                    <td><button type="button" class="btn btn-danger">Delete</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% endblock content %}
