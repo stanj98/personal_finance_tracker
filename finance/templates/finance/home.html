@@ -1,34 +1,108 @@
 
 {% extends "finance/base.html" %}
 
-{% block content %}
-        <table class="table">
-            <thead>
-                <button type="button" class="btn btn-success">Add</button>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Item</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Accounts</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Date</th>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transacation in transactions %}
-                <tr>
-                    <th scope="row">{{ transacation.id }}</th>
-                    <td>{{ transacation.desc }}</td>
-                    <td>{{ transacation.category }}</td>
-                    <td>{{ transacation.account }}</td>
-                    <td>{{ transacation.amount }}</td>
-                    <td>{{ transacation.date }}</td>
-                    <td><button type="button" class="btn btn-info">Edit</button></td>
-                    <td><button type="button" class="btn btn-danger">Delete</button></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-{% endblock content %}
+{% block visuals %}
+    <div class="row">
+        <div class="col-md-4">
+            <canvas id="categorySplit"></canvas>
+        </div>
+        <div class="col-md-4">
+            <canvas id="totalMonthlyExpenditure"></canvas>
+        </div>
+        <div class="col-md-4">
+            <canvas id="categorySplit"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const totalMonthlyExpenditure = document.getElementById('totalMonthlyExpenditure');
+        const categorySplit = document.getElementById('categorySplit');
+        // const ctx = document.getElementById('totalMonthlyExpenditure');
+
+
+        new Chart(totalMonthlyExpenditure, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                label: 'Accumulated expense per month',
+                data: [12, 19, 3, 5, 2, 3, 12, 19, 3, 5, 2, 3],
+                borderWidth: 2
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        new Chart(categorySplit, {
+            type: 'pie',
+            data: {
+                labels: [
+                    'Food',
+                    'Transportation',
+                    'Beauty',
+                    'Education',
+                    'Tithes',
+                    'Donation',
+                    'Utilities'
+                ],
+                datasets: [{
+                    label: 'Expense Breakup - current month',
+                    data: [20, 20, 10, 20, 10, 10, 10],
+                    backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)',
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)',
+                    'rgb(255, 205, 86)'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+    {% endblock visuals %}
+
+{% block table %}
+    <table class="table">
+        <thead>
+            <button type="button" class="btn btn-success">Add</button>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Item</th>
+                <th scope="col">Category</th>
+                <th scope="col">Accounts</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Date</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transacation in transactions %}
+            <tr>
+                <th scope="row">{{ transacation.id }}</th>
+                <td>{{ transacation.desc }}</td>
+                <td>{{ transacation.category }}</td>
+                <td>{{ transacation.account }}</td>
+                <td>{{ transacation.amount }}</td>
+                <td>{{ transacation.date }}</td>
+                <td><button type="button" class="btn btn-info">Edit</button></td>
+                <td><button type="button" class="btn btn-danger">Delete</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock table %}
