@@ -1,21 +1,70 @@
 
 {% extends "finance/base.html" %}
 
-{% block visuals %}
-    <div class="row">
-        <div class="col-md-4">
-            <canvas id="categorySplit"></canvas>
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" data-bs-toggle="tab" href="#personal">Personal</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
+          </li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="personal" class="tab-pane fade show active">
+            <div class="row">
+                <div class="col-md-4">
+                    <canvas id="categorySplit"></canvas>
+                </div>
+                <div class="col-md-4">
+                    <canvas id="totalMonthlyExpenditure"></canvas>
+                </div>
+                <div class="col-md-4">
+                    <canvas id="categorySplit"></canvas>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <button type="button" class="btn btn-success">Add</button>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Item</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Accounts</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Date</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transacation in transactions %}
+                    <tr>
+                        <th scope="row">{{ transacation.id }}</th>
+                        <td>{{ transacation.desc }}</td>
+                        <td>{{ transacation.category }}</td>
+                        <td>{{ transacation.account }}</td>
+                        <td>{{ transacation.amount }}</td>
+                        <td>{{ transacation.date }}</td>
+                        <td><button type="button" class="btn btn-info">Edit</button></td>
+                        <td><button type="button" class="btn btn-danger">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="col-md-4">
-            <canvas id="totalMonthlyExpenditure"></canvas>
-        </div>
-        <div class="col-md-4">
-            <canvas id="categorySplit"></canvas>
+
+        <div id="family" class="tab-pane fade">
+            <p>Coming soon!</p>
         </div>
     </div>
 
+
+    <!-- Javascript render below for all, what about segregration of javascript code between personal and family? -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
+        <script>
         const totalMonthlyExpenditure = document.getElementById('totalMonthlyExpenditure');
         const categorySplit = document.getElementById('categorySplit');
         // const ctx = document.getElementById('totalMonthlyExpenditure');
@@ -73,36 +122,4 @@
             }
         });
     </script>
-    {% endblock visuals %}
-
-{% block table %}
-    <table class="table">
-        <thead>
-            <button type="button" class="btn btn-success">Add</button>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Item</th>
-                <th scope="col">Category</th>
-                <th scope="col">Accounts</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Date</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transacation in transactions %}
-            <tr>
-                <th scope="row">{{ transacation.id }}</th>
-                <td>{{ transacation.desc }}</td>
-                <td>{{ transacation.category }}</td>
-                <td>{{ transacation.account }}</td>
-                <td>{{ transacation.amount }}</td>
-                <td>{{ transacation.date }}</td>
-                <td><button type="button" class="btn btn-info">Edit</button></td>
-                <td><button type="button" class="btn btn-danger">Delete</button></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endblock table %}
+{% endblock content %}
