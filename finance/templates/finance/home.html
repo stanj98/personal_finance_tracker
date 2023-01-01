@@ -32,7 +32,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Item</th>
                         <th scope="col">Category</th>
-                        <th scope="col">Accounts</th>
+                        <th scope="col">Description</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Date</th>
                         <th scope="col"></th>
@@ -40,14 +40,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for transacation in transactions %}
+                    {% for transaction in transactions %}
                     <tr>
-                        <th scope="row">{{ transacation.id }}</th>
-                        <td>{{ transacation.desc }}</td>
-                        <td>{{ transacation.category }}</td>
-                        <td>{{ transacation.account }}</td>
-                        <td>{{ transacation.amount }}</td>
-                        <td>{{ transacation.date }}</td>
+                        <th scope="row">{{ transaction.id }}</th>
+                        <td>{{ transaction.item }}</td>
+                        <td>{{ transaction.category }}</td>
+                        {% if transaction.content %}
+                            <td>{{ transaction.content }}</td>
+                        {% else %}
+                            <td> - </td>
+                        {% endif %}
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.transaction_date|date:"F d, Y H:s a" }}</td>
                         <td><button type="button" class="btn btn-info">Edit</button></td>
                         <td><button type="button" class="btn btn-danger">Delete</button></td>
                     </tr>
@@ -93,18 +97,10 @@
         new Chart(categorySplit, {
             type: 'pie',
             data: {
-                labels: [
-                    'Food',
-                    'Transportation',
-                    'Beauty',
-                    'Education',
-                    'Tithes',
-                    'Donation',
-                    'Utilities'
-                ],
+                labels: {{ category_labels|safe }},
                 datasets: [{
                     label: 'Expense Breakup - current month',
-                    data: [20, 20, 10, 20, 10, 10, 10],
+                    data: {{ category_data|safe }},
                     backgroundColor: [
                     'rgb(255, 99, 132)',
                     'rgb(54, 162, 235)',

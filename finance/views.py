@@ -1,35 +1,25 @@
 from django.shortcuts import render
-
-transactions = [
-    {
-        'id': 1,
-        'date': '28/12/2022 20:43',
-        'account': 'Cash',
-        'category': 'Food',
-        'amount': 'Rs. 23.45',
-        'desc': 'Pizza hut - dinner'
-    },
-    {
-        'id': 2,
-        'date': '28/12/2022 21:03',
-        'account': 'account',
-        'category': 'transport',
-        'amount': 'Rs. 100.23',
-        'desc': 'Fuel'
-    },
-    {
-        'id': 3,
-        'date': '28/12/2022 21:30',
-        'account': 'card',
-        'category': 'food',
-        'amount': 'Rs. 20',
-        'desc': 'Mcdonalds icecream'
-    }
-]
+from django.db.models import Sum
+from .models import Transaction
+from django.db.models.functions import TruncMonth, TruncYear
 
 def home(request):
+    category_labels = []
+    category_data = []
+    transactions = Transaction.objects.all()
+    #find out total expense overall, then find out how much each category takes part for expenses
+    total = Transaction.objects.all().annotate(Year=TruncYear('transaction_date')).aggregate(Sum('amount'))
+    category_list = (Transaction.objects.all().values('category').distinct())
+    for item in category_list:
+        category_labels.append(item['category'])
+        category_amount = Transaction.objects.filter(category = item['category']).annotate(Month=TruncMonth('transaction_date')).aggregate(Sum('amount'))
+        category_amount = (category_amount['amount__sum'] / total['amount__sum']) * 100
+        category_ratio = round(category_amount, 2)
+        category_data.append(category_ratio)
     context = {
-        'transactions': transactions
+        'transactions': transactions,
+        'category_labels': category_labels,
+        'category_data': category_data
     }
     return render(request, 'finance/home.html', context)
 
