@@ -2,120 +2,124 @@
 {% extends "finance/base.html" %}
 
 {% block content %}
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" data-bs-toggle="tab" href="#personal">Personal</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
-          </li>
-    </ul>
+    {% if transactions %}
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" data-bs-toggle="tab" href="#personal">Personal</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
+            </li>
+        </ul>
 
-    <div class="tab-content">
-        <div id="personal" class="tab-pane fade show active">
-            <div class="row">
-                <div class="col-md-4">
-                    <canvas id="categorySplit"></canvas>
+        <div class="tab-content">
+            <div id="personal" class="tab-pane fade show active">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="categorySplit"></canvas>
+                    </div>
+                    <div class="col-md-5">
+                        <canvas id="totalMonthlyExpenditure"></canvas>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <canvas id="totalMonthlyExpenditure"></canvas>
-                </div>
-                <div class="col-md-4">
-                    <canvas id="categorySplit"></canvas>
-                </div>
+
+                <table class="table">
+                    <thead>
+                        <button type="button" class="btn btn-success">Add</button>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Item</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Date</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ transaction.item }}</td>
+                            <td>{{ transaction.category }}</td>
+                            {% if transaction.content %}
+                                <td>{{ transaction.content }}</td>
+                            {% else %}
+                                <td> - </td>
+                            {% endif %}
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.transaction_date|date:"F d, Y H:s a" }}</td>
+                            <td><button type="button" class="btn btn-info">Edit</button></td>
+                            <td><button type="button" class="btn btn-danger">Delete</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
-            <table class="table">
-                <thead>
-                    <button type="button" class="btn btn-success">Add</button>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Item</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Date</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for transaction in transactions %}
-                    <tr>
-                        <th scope="row">{{ transaction.id }}</th>
-                        <td>{{ transaction.item }}</td>
-                        <td>{{ transaction.category }}</td>
-                        {% if transaction.content %}
-                            <td>{{ transaction.content }}</td>
-                        {% else %}
-                            <td> - </td>
-                        {% endif %}
-                        <td>{{ transaction.amount }}</td>
-                        <td>{{ transaction.transaction_date|date:"F d, Y H:s a" }}</td>
-                        <td><button type="button" class="btn btn-info">Edit</button></td>
-                        <td><button type="button" class="btn btn-danger">Delete</button></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div id="family" class="tab-pane fade">
+                <p>Coming soon!</p>
+            </div>
         </div>
 
-        <div id="family" class="tab-pane fade">
-            <p>Coming soon!</p>
-        </div>
-    </div>
+
+        <!-- Javascript render below for all, what about segregration of javascript code between personal and family? -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+            const totalMonthlyExpenditure = document.getElementById('totalMonthlyExpenditure');
+            const categorySplit = document.getElementById('categorySplit');
+            // const ctx = document.getElementById('totalMonthlyExpenditure');
 
 
-    <!-- Javascript render below for all, what about segregration of javascript code between personal and family? -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-        const totalMonthlyExpenditure = document.getElementById('totalMonthlyExpenditure');
-        const categorySplit = document.getElementById('categorySplit');
-        // const ctx = document.getElementById('totalMonthlyExpenditure');
-
-
-        new Chart(totalMonthlyExpenditure, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                label: 'Accumulated expense per month',
-                data: [12, 19, 3, 5, 2, 3, 12, 19, 3, 5, 2, 3],
-                borderWidth: 2
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            new Chart(totalMonthlyExpenditure, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                    label: 'Accumulated expense per month',
+                    data: {{ total_monthly_expenses|safe }},
+                    borderWidth: 2
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        new Chart(categorySplit, {
-            type: 'pie',
-            data: {
-                labels: {{ category_labels|safe }},
-                datasets: [{
-                    label: 'Expense Breakup - current month',
-                    data: {{ category_data|safe }},
-                    backgroundColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 205, 86)',
-                    'rgb(255, 99, 132)',
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 205, 86)',
-                    'rgb(255, 205, 86)'
-                    ],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                maintainAspectRatio: false
-            }
-        });
-    </script>
+            new Chart(categorySplit, {
+                type: 'pie',
+                data: {
+                    labels: {{ category_labels|safe }},
+                    datasets: [{
+                        label: 'Expense Breakup - current month',
+                        data: {{ category_data|safe }},
+                        backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(255, 205, 86)'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false
+                }
+            });
+        </script>
+    {% else %}
+        <div class="container empty-page">
+            <h1> Saving matters, so start tracking </h1>
+            <button id="first-add-button" type="button" class="btn btn-success"> Add </button>
+        </div>
+    {% endif %}
 {% endblock content %}

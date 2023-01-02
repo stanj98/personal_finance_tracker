@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'finance.apps.FinanceConfig',
+    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': "personal_finance_tracker",
         'USER': "postgres",
-        'PASSWORD': "",
+        'PASSWORD': "shalom1966",
         'HOST': 'localhost',
         'PORT': '5432',
     }
