@@ -3,7 +3,9 @@ from django.db.models import Sum
 from .models import Transaction
 from django.db.models.functions import TruncMonth, TruncYear
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
     '''
         In home page, the personal tab opens up. Here, the intention is to show the categories of expenses available for the
@@ -19,7 +21,7 @@ def home(request):
     months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     current_year = datetime.now().date().year
     current_month = datetime.now().date().month
-    current_year_transactions = Transaction.objects.filter(transaction_date__year=current_year)
+    current_year_transactions = Transaction.objects.filter(payer = request.user.id, transaction_date__year=current_year)
     transactions = current_year_transactions.filter(transaction_date__month=current_month)
 
     total = transactions.aggregate(Sum('amount'))
