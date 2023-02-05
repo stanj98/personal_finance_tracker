@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Sum
 from .models import Transaction
-from django.db.models.functions import TruncMonth, TruncYear
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from .forms import TransactionCreateForm
+from django.contrib import messages
 
 @login_required
 def home(request):
@@ -21,7 +22,7 @@ def home(request):
     months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     current_year = datetime.now().date().year
     current_month = datetime.now().date().month
-    current_year_transactions = Transaction.objects.filter(payer = request.user.id, transaction_date__year=current_year)
+    current_year_transactions = Transaction.objects.filter(payer = request.user, transaction_date__year=current_year)
     transactions = current_year_transactions.filter(transaction_date__month=current_month)
 
     total = transactions.aggregate(Sum('amount'))
@@ -41,11 +42,25 @@ def home(request):
         category_ratio = round(category_amount, 2)
         category_data.append(category_ratio)
 
+    if (request.method == 'POST'):
+        form = TransactionCreateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            #form data is not being saved, figure out why
+            data = form.save(commit=False)
+            data.payer = request.user
+            data.save()
+            print(data.cleaned_data)
+            messages.success(request, f'Your first transaction is created!')
+            return redirect('finance-home')
+    else:
+        form = TransactionCreateForm(instance=request.user)
+
     context = {
         'transactions': transactions,
         'category_labels': category_labels,
         'category_data': category_data,
-        'total_monthly_expenses': total_monthly_expenses
+        'total_monthly_expenses': total_monthly_expenses,
+        'form': form,
     }
     return render(request, 'finance/home.html', context)
 

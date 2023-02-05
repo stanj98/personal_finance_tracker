@@ -16,6 +16,7 @@ class SharedTransaction(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     payer = models.ForeignKey(User, default = 'Deleted user', on_delete = models.SET_DEFAULT)
     item = models.CharField(max_length = 100)
+    account = models.CharField(max_length=25, default = 'card')
     category = models.CharField(max_length = 50)
     amount = models.FloatField()
     content = models.TextField(null = True)
@@ -27,6 +28,7 @@ class SharedTransaction(models.Model):
 class Transaction(models.Model):
     payer = models.ForeignKey(User, on_delete = models.CASCADE)
     item = models.CharField(max_length = 100)
+    account = models.CharField(max_length=25, default = 'card')
     category = models.CharField(max_length = 50)
     amount = models.FloatField()
     content = models.TextField(null = True)

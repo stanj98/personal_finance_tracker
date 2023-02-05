@@ -1,6 +1,6 @@
 
 {% extends "finance/base.html" %}
-
+{% load crispy_forms_tags %}
 {% block content %}
     {% if transactions %}
         <ul class="nav nav-tabs">
@@ -117,9 +117,22 @@
             });
         </script>
     {% else %}
-        <div class="container empty-page">
-            <h1> Saving matters, so start tracking </h1>
-            <button id="first-add-button" type="button" class="btn btn-success"> Add </button>
+        <div class="container">
+            <form method = "POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Add transaction</legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit"> Add </button>
+                </div>
+            </form>
         </div>
     {% endif %}
+    <script>
+        $(function() {  
+            $('#id_transaction_date').datetimepicker();  
+        });  
+    </script>
 {% endblock content %}
